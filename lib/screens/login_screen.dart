@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:instafire/constants/colors.dart';
 import 'package:instafire/constants/utils.dart';
+import 'package:instafire/responsive/responsive_layout.dart';
 import 'package:instafire/services/authService.dart';
 import 'package:instafire/widgets/input_fields.dart';
 
+import '../responsive/mobile_layout.dart';
+import '../responsive/web_layout.dart';
 import 'signup_screen.dart';
 
 class login extends StatefulWidget {
@@ -28,6 +31,11 @@ class _loginState extends State<login> {
 
     if (res == 'success') {
       showSnackBar(res, context);
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (ctx) => ResponsiveLayout(
+                mobileScreenLayout: const MobileScreen(),
+                webScreenLayout: const WebScreen(),
+              )));
     } else {
       showSnackBar(res, context);
     }

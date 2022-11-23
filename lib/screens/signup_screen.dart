@@ -4,9 +4,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instafire/constants/colors.dart';
 import 'package:instafire/constants/utils.dart';
+import 'package:instafire/responsive/responsive_layout.dart';
 import 'package:instafire/screens/login_screen.dart';
 import 'package:instafire/services/authService.dart';
 import 'package:instafire/widgets/input_fields.dart';
+
+import '../responsive/mobile_layout.dart';
+import '../responsive/web_layout.dart';
 
 class SignUp extends StatefulWidget {
   SignUp({Key? key}) : super(key: key);
@@ -57,6 +61,12 @@ class _SignUpState extends State<SignUp> {
     });
     if (res != 'success') {
       showSnackBar(res, context);
+    } else {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (ctx) => ResponsiveLayout(
+                mobileScreenLayout: const MobileScreen(),
+                webScreenLayout: const WebScreen(),
+              )));
     }
     print(res);
   }

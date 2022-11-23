@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:instafire/models/user.dart' as model;
 import 'package:instafire/services/storageMethods.dart';
 
 class AuthService {
@@ -35,16 +36,19 @@ class AuthService {
         String photoUrl =
             await StorageMethods().uploadImg("profileImg", image, false);
 
+//usermodel
+
+        model.User user = model.User(
+            username: username,
+            uid: cred.user!.uid,
+            email: email,
+            bio: bio,
+            followers: [],
+            following: [],
+            photoUrl: photoUrl);
+
         //add user details
-        await _fire.collection('users').doc(cred.user!.uid).set({
-          'username': username,
-          'uid': cred.user!.uid,
-          'email': email,
-          'bio': bio,
-          'followers': [],
-          'following': [],
-          'photoUrl': photoUrl
-        });
+        await _fire.collection('users').doc(cred.user!.uid).set(user.toJson());
 
         // await _fire.collection('users').add({
         //   'username': username,
