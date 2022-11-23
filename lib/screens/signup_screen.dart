@@ -139,6 +139,7 @@ class _SignUpState extends State<SignUp> {
                         password: _passwordController.text,
                         username: _usernameController.text,
                         bio: _bioController.text,
+                        image: _image!,
                       );
                       print(res);
                     },

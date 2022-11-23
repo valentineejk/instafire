@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:instafire/services/storageMethods.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -13,7 +14,7 @@ class AuthService {
     required String password,
     required String username,
     required String bio,
-    // required Uint8List image,
+    required Uint8List image,
   }) async {
     String res = "Some error occurred";
 
@@ -30,6 +31,10 @@ class AuthService {
             email: email, password: password);
         print(cred.user!.uid);
 
+        //check image
+        String photoUrl =
+            await StorageMethods().uploadImg("profileImg", image, false);
+
         //add user details
         await _fire.collection('users').doc(cred.user!.uid).set({
           'username': username,
@@ -37,7 +42,8 @@ class AuthService {
           'email': email,
           'bio': bio,
           'followers': [],
-          'following': []
+          'following': [],
+          'photoUrl': photoUrl
         });
 
         // await _fire.collection('users').add({
@@ -51,7 +57,19 @@ class AuthService {
 
         res = 'success';
       }
-    } catch (e) {
+    }
+    //  on FirebaseAuthException catch (e) {
+    //   switch (e.code) {
+    //     case "invalid-email":
+    //       res = "Kindly enter an email address";
+    //       break;
+    //     case "weak-password":
+    //       res = "Password should be at least 6 characters";
+    //       break;
+    //     default:
+    //   }
+    // }
+    catch (e) {
       res = e.toString();
     }
     return res;
