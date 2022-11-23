@@ -21,6 +21,8 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   Uint8List? _image;
+  bool _isLoading = false;
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -36,6 +38,27 @@ class _SignUpState extends State<SignUp> {
     setState(() {
       _image = img;
     });
+  }
+
+  void signUpUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    String res = await AuthService().SignUpUser(
+      email: _emailController.text,
+      password: _passwordController.text,
+      username: _usernameController.text,
+      bio: _bioController.text,
+      image: _image!,
+    );
+    setState(() {
+      _isLoading = false;
+    });
+    if (res != 'success') {
+      showSnackBar(res, context);
+    }
+    print(res);
   }
 
   @override
@@ -62,7 +85,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                   //username
                   SizedBox(
-                    height: 64,
+                    height: 34,
                   ),
                   Stack(
                     children: [
@@ -133,16 +156,7 @@ class _SignUpState extends State<SignUp> {
                     height: 30,
                   ),
                   InkWell(
-                    onTap: () async {
-                      String res = await AuthService().SignUpUser(
-                        email: _emailController.text,
-                        password: _passwordController.text,
-                        username: _usernameController.text,
-                        bio: _bioController.text,
-                        image: _image!,
-                      );
-                      print(res);
-                    },
+                    onTap: signUpUser,
                     child: Container(
                       alignment: Alignment.center,
                       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -154,7 +168,14 @@ class _SignUpState extends State<SignUp> {
                             ),
                           ),
                           color: Colors.pinkAccent),
-                      child: Text('Sign Up'),
+                      child: _isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                backgroundColor: Colors.black,
+                              ),
+                            )
+                          : Text('Sign Up'),
                     ),
                   ),
                   SizedBox(

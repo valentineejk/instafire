@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:instafire/constants/colors.dart';
+import 'package:instafire/constants/utils.dart';
+import 'package:instafire/services/authService.dart';
 import 'package:instafire/widgets/input_fields.dart';
 
 import 'signup_screen.dart';
@@ -15,6 +17,24 @@ class login extends StatefulWidget {
 class _loginState extends State<login> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  void loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await AuthService().loginUser(
+        email: _emailController.text, password: _passwordController.text);
+
+    if (res == 'success') {
+      showSnackBar(res, context);
+    } else {
+      showSnackBar(res, context);
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   void dispose() {
@@ -74,6 +94,7 @@ class _loginState extends State<login> {
                     height: 30,
                   ),
                   InkWell(
+                    onTap: loginUser,
                     child: Container(
                       alignment: Alignment.center,
                       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -116,10 +137,14 @@ class _loginState extends State<login> {
                           );
                         },
                         child: Container(
-                          child: const Text(
-                            'Sign up',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
+                          child: _isLoading
+                              ? Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : const Text(
+                                  'Sign up',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
                           padding: const EdgeInsets.symmetric(vertical: 8),
                         ),
                       ),

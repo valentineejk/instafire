@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:instafire/constants/colors.dart';
@@ -27,12 +28,37 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark()
           .copyWith(scaffoldBackgroundColor: mobileBackgroundColor),
+
       title: 'Insta App',
       // home: ResponsiveLayout(
       //   mobileScreenLayout: MobileScreen(),
       //   webScr(eenLayout: WebScreen(),
       // ),
-      home: login(),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.hasData) {
+              return ResponsiveLayout(
+                mobileScreenLayout: const MobileScreen(),
+                webScreenLayout: const WebScreen(),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('${snapshot.error}'),
+              );
+            }
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.pinkAccent,
+              ),
+            );
+          }
+          return login();
+        },
+      ),
     );
   }
 }
